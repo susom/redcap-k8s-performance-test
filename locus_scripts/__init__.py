@@ -1,0 +1,1 @@
+from locus_scripts import SingleSurvey
