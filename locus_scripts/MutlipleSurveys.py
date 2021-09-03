@@ -13,6 +13,7 @@ def on_test_stop(environment, **kwargs):
     print("A new test is ending")
 
 class MutlipleSurveyUser(HttpUser):
+    weight = 1
     params = {
         'random_int': 5,
         'random_string': 'abcdef',
@@ -22,22 +23,22 @@ class MutlipleSurveyUser(HttpUser):
 
     @task(1)
     def submit_public_survey1(self):
-        print("submitting public survey ... ")
+        print("submitting multiple survey ... ")
         self.client.post(os.getenv('multiple_public_survey_url1'), self.params, catch_response=True)
     
     @task(1)
     def submit_public_survey2(self):
-        print("submitting public survey 2 ... ")
+        print("submitting multiple survey 2 ... ")
         self.client.post(os.getenv('multiple_public_survey_url2'), self.params, catch_response=True)            
     
     @task(1)
     def submit_public_survey3(self):
-        print("submitting public survey 3 ... ")
+        print("submitting multiple survey 3 ... ")
         self.client.post(os.getenv('multiple_public_survey_url3'), self.params, catch_response=True)
 
     @task(1)
     def submit_public_survey4(self):
-        print("submitting public survey 4 ... ")
+        print("submitting multiple survey 4 ... ")
         self.client.post(os.getenv('multiple_public_survey_url4'), self.params, catch_response=True)
 
     @task(5) # render 3 times as often
@@ -51,7 +52,7 @@ class MutlipleSurveyUser(HttpUser):
         
         choice = random.choices(choices)
         
-        print(f"rendering survey ... ${choice}")
+        print(f"rendering multiple survey ... ${choice}")
         
         self.client.get(random.choice(choices))
 

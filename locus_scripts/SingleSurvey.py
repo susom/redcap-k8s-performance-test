@@ -13,9 +13,11 @@ def on_test_stop(environment, **kwargs):
     print("A new test is ending")
 
 class SingleSurveyUser(HttpUser):
+    weight = 1
+    
     @task(1)
     def submit_public_survey(self):
-        print("submitting public survey ... ")
+        print("submitting single survey ... ")
         params = {
             'random_int': 5,
             'random_string': 'abcdef',
@@ -29,7 +31,7 @@ class SingleSurveyUser(HttpUser):
 
     @task(3) # render 3 times as often
     def render_public_survey(self):
-        print("rendering survey ... ")
+        print("rendering single survey ... ")
         self.client.get(os.getenv('single_public_survey_url'))
 
     wait_time = between(1, 3)
