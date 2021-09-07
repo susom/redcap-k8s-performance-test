@@ -13,12 +13,38 @@ The following methods are tested at scale
 ## Setup
  Please create a .env file with the following configuration and place it in root.
 
-```
+```bash
     public_survey_url=""
     multiple_public_survey_url1=""
     multiple_public_survey_url2=""
     multiple_public_survey_url3=""
     multiple_public_survey_url4=""
+
+    ## User Weights ##
+    
+    # proportion of single survey users
+    single_survey_weight=<INT> 
+
+    # proportion of multiple survey users
+    multiple_survey_weight=<INT>
+    
+    # E.g {1,2} meaning there will be a 1:2 ratio of 
+    # single survey users to multi survey users spawned. 
+    # For 10 users on startup this will result in 3 single and 7 multi
+    
+    ## Function call weights ##
+    # Each line represents the relative proportion of each function call
+    
+    single_survey_submit_weight=<INT>
+    single_survey_render_weight=<INT>
+
+    multiple_survey_render_weight=<INT>
+    mutiple_survey1_submit_weight=<INT>
+    mutiple_survey2_submit_weight=<INT>
+    mutiple_survey3_submit_weight=<INT>
+    mutiple_survey4_submit_weight=<INT>
+
+
 ```
 
 ## Running tests
@@ -28,3 +54,9 @@ Simply run `docker-compose build` followed by `docker-compose up` to start the c
 Navigate to `http://localhost:8089/` to begin using the locus testing suite.
 
 Default configuration gives both classes a weight of 1, please ensure you specify at least 2 for the number of users.
+
+
+## Scaling
+Aside from specifying the number of users through the UI, workers can be specified in the docker compose text to increase the number of containers (emulating a distributed system) like so: 
+
+`docker-compose up --scale worker <NUM_WORKERS>`

@@ -13,7 +13,12 @@ def on_test_stop(environment, **kwargs):
     print("A new test is ending")
 
 class MutlipleSurveyUser(HttpUser):
-    weight = 1
+    rw = int(os.getenv('multiple_survey_render_weight')) if os.getenv('multiple_survey_render_weight') else 1
+    sw1 = int(os.getenv('mutiple_survey1_submit_weight')) if os.getenv('mutiple_survey1_submit_weight') else 1
+    sw2 = int(os.getenv('mutiple_survey2_submit_weight')) if os.getenv('mutiple_survey2_submit_weight') else 1
+    sw3 = int(os.getenv('mutiple_survey3_submit_weight')) if os.getenv('mutiple_survey3_submit_weight') else 1
+    sw4 = int(os.getenv('mutiple_survey4_submit_weight')) if os.getenv('mutiple_survey4_submit_weight') else 1
+    
     params = {
         'random_int': 5,
         'random_string': 'abcdef',
@@ -21,27 +26,36 @@ class MutlipleSurveyUser(HttpUser):
         'submit-action': 'submit-btn-saverecord'
     }
 
-    @task(1)
+    def submit(self, uri, name):
+        with self.client.post(uri, self.params, catch_response=True, name=name) as response: 
+            if response.status_code == 200:
+                response.success()
+            else:
+                response.failure()
+
+    @task(sw1)
     def submit_public_survey1(self):
         print("submitting multiple survey ... ")
-        self.client.post(os.getenv('multiple_public_survey_url1'), self.params, catch_response=True)
+        self.submit(os.getenv('multiple_public_survey_url1'), 'Multiple Survey 1 submission')
     
-    @task(1)
+    @task(sw2)
     def submit_public_survey2(self):
         print("submitting multiple survey 2 ... ")
-        self.client.post(os.getenv('multiple_public_survey_url2'), self.params, catch_response=True)            
+        self.submit(os.getenv('multiple_public_survey_url2'), 'Multiple Survey 2 submission')
+
     
-    @task(1)
+    @task(sw3)
     def submit_public_survey3(self):
         print("submitting multiple survey 3 ... ")
-        self.client.post(os.getenv('multiple_public_survey_url3'), self.params, catch_response=True)
+        self.submit(os.getenv('multiple_public_survey_url3'), 'Multiple Survey 3 submission')
 
-    @task(1)
+
+    @task(sw4)
     def submit_public_survey4(self):
         print("submitting multiple survey 4 ... ")
-        self.client.post(os.getenv('multiple_public_survey_url4'), self.params, catch_response=True)
+        self.submit(os.getenv('multiple_public_survey_url4'), 'Multiple Survey 4 submission')
 
-    @task(5) # render 3 times as often
+    @task(rw) # render 5 times as often
     def render_public_survey(self):
         choices = [
             os.getenv('multiple_public_survey_url1'),
@@ -50,10 +64,10 @@ class MutlipleSurveyUser(HttpUser):
             os.getenv('multiple_public_survey_url4')
         ]
         
-        choice = random.choices(choices)
+        choice = random.randint(0,3)
         
-        print(f"rendering multiple survey ... ${choice}")
+        print(f"rendering multiple survey ... {choice + 1}")
         
-        self.client.get(random.choice(choices))
+        self.client.get(choices[choice], name='Multiple survey render')
 
     wait_time = between(1, 3)
